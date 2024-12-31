@@ -1,0 +1,89 @@
+let gameSeq=[];
+let userSeq=[];
+
+let btns=["yellow","red","purple","green"];
+
+let started=false;
+let Level=0;
+
+let h2=document.querySelector("h2");
+
+document.addEventListener("keypress",function(){ 
+    if(started==false){
+        console.log("game is started");
+        started=true;
+
+        Levelup();
+    }
+})
+
+function gameFlash(btn){
+    btn.classList.add("flash");
+    setTimeout(function(){
+        btn.classList.remove("flash");
+    },250);
+}
+
+function userFlash(btn){
+    btn.classList.add("userflash");
+    setTimeout(function(){
+        btn.classList.remove("userflash");
+    },250);
+}
+
+function Levelup(){
+    userSeq=[];
+    Level++;
+    h2.innerText=`Level ${Level}`;
+
+    let randIdx=Math.floor(Math.random()*3);
+    let randcolor=btns[randIdx];
+    let randbtn=document.querySelector(`.${randcolor}`);
+    gameSeq.push(randcolor);
+    console.log(gameSeq);
+    gameFlash(randbtn);
+}
+
+function checkans(idx){
+    // console.log("curr level:", Level);
+
+    if(userSeq[idx] === gameSeq[idx]){
+        if(userSeq.length==gameSeq.length){
+            setTimeout(Levelup,1000);
+        }
+    }else{
+        h2.innerHTML=`Game Over! Your Score Was <b>${Level}</b>  <br>
+        Press Any Key to Satrt 
+         `;
+         document.querySelector("body").style.backgroundColor="red";
+
+        setTimeout(function(){
+            document.querySelector("body").style.backgroundColor="white";
+        },150);
+        reset();
+    }
+
+}
+
+function btnpress(){
+    // console.log(this)
+    let btn = this;
+    userFlash(btn);
+    userColor=btn.getAttribute("id");
+    userSeq.push(userColor);
+
+    checkans(userSeq.length-1);
+
+}
+
+let allBtns=document.querySelectorAll(".btn");
+for(btn of allBtns){
+    btn.addEventListener("click",btnpress);
+}
+
+function reset(){
+    started=false;
+    gameSeq=[];
+    userSeq=[];
+    Level=0;
+}
